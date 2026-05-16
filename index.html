@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reinblacks Creativz</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   RESET & TOKENS
+═══════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#E50914;--red-h:#f6121d;
+  --black:#000;--bg:#141414;--card-bg:#1f1f1f;
+  --white:#fff;--muted:rgba(255,255,255,.55);
+  --green:#46d369;--blue:#54b9c5;
+  --nav-h:68px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Montserrat',sans-serif;overflow-x:hidden;min-height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
+
+/* ═══════════════════════════════════════════════
+   LOADER
+═══════════════════════════════════════════════ */
+#loader{
+  position:fixed;inset:0;background:#000;z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .35s,visibility .35s;
+}
+#loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+.ld-logo{
+  font-weight:900;font-size:clamp(80px,14vw,140px);letter-spacing:-.02em;
+  color:var(--red);text-shadow:0 0 40px rgba(229,9,20,.7),0 0 100px rgba(229,9,20,.35);
+  animation:ldpulse .55s ease-in-out infinite alternate;user-select:none;
+}
+@keyframes ldpulse{
+  from{transform:scale(1);text-shadow:0 0 30px rgba(229,9,20,.6)}
+  to{transform:scale(1.05);text-shadow:0 0 70px rgba(229,9,20,1),0 0 140px rgba(229,9,20,.5)}
+}
+.ld-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:#222}
+.ld-fill{height:100%;width:0%;background:var(--red);box-shadow:0 0 12px var(--red)}
+
+/* ═══════════════════════════════════════════════
+   NAV — Netflix-exact
+═══════════════════════════════════════════════ */
+#nav{
+  position:fixed;top:0;left:0;right:0;height:var(--nav-h);
+  display:flex;align-items:center;padding:0 4%;z-index:1100;
+  transition:background .3s;
+  background:linear-gradient(to bottom,rgba(0,0,0,.85) 0%,transparent 100%);
+}
+#nav.solid{background:rgba(20,20,20,.97);box-shadow:0 2px 12px rgba(0,0,0,.5)}
+
+.nav-logo{
+  font-weight:900;font-size:26px;letter-spacing:-.01em;color:var(--red);
+  cursor:pointer;white-space:nowrap;margin-right:28px;line-height:1;
+  text-shadow:0 0 16px rgba(229,9,20,.4);text-decoration:none;
+}
+.nav-logo small{display:block;font-size:9px;font-weight:600;letter-spacing:.25em;color:rgba(255,255,255,.45);margin-top:2px}
+
+.nav-links{display:flex;gap:18px;align-items:center}
+.nav-links a{font-size:13px;font-weight:500;color:rgba(255,255,255,.75);text-decoration:none;cursor:pointer;transition:color .15s;white-space:nowrap}
+.nav-links a:hover,.nav-links a.active{color:var(--white)}
+
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:18px}
+
+.nav-search{display:flex;align-items:center;gap:8px}
+.srch-ico{background:none;border:none;color:var(--white);font-size:16px;cursor:pointer;padding:4px}
+.srch-ico:hover{color:var(--muted)}
+.srch-inp{
+  width:0;opacity:0;background:rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.5);
+  color:var(--white);font-family:'Montserrat',sans-serif;font-size:13px;
+  padding:5px 10px;outline:none;transition:width .3s,opacity .3s;pointer-events:none;
+}
+.nav-search.open .srch-inp{width:190px;opacity:1;pointer-events:all}
+
+.nav-bell{background:none;border:none;color:var(--white);font-size:16px;cursor:pointer;padding:4px;position:relative}
+.bell-dot{position:absolute;top:1px;right:1px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg)}
+
+.nav-ava{
+  width:32px;height:32px;border-radius:4px;background:var(--red);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;cursor:pointer;
+}
+.nav-ham{display:none;background:none;border:none;color:var(--white);font-size:20px;cursor:pointer}
+@media(max-width:700px){.nav-links{display:none}.nav-ham{display:block}}
+
+/* Category Bar */
+#catbar{
+  position:fixed;top:var(--nav-h);left:0;right:0;
+  display:flex;align-items:center;gap:6px;padding:8px 4%;
+  background:linear-gradient(to bottom,rgba(20,20,20,.55),transparent);
+  overflow-x:auto;scrollbar-width:none;white-space:nowrap;z-index:1099;
+}
+#catbar::-webkit-scrollbar{display:none}
+.cbt{
+  background:rgba(51,51,51,.9);border:none;color:rgba(255,255,255,.8);
+  font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;
+  padding:5px 14px;border-radius:3px;cursor:pointer;white-space:nowrap;flex-shrink:0;
+  transition:background .15s,color .15s;
+}
+.cbt:hover,.cbt.active{background:rgba(255,255,255,.2);color:var(--white)}
+.cbt.apply{background:transparent;border:1.5px solid var(--red);color:var(--red)}
+.cbt.apply:hover{background:var(--red);color:var(--white)}
+
+/* ═══════════════════════════════════════════════
+   BILLBOARD / HERO
+═══════════════════════════════════════════════ */
+#hero{
+  position:relative;height:100svh;min-height:560px;
+  display:flex;align-items:flex-end;overflow:hidden;
+}
+.hero-vid-wrap{position:absolute;inset:-8% -5%;z-index:0;pointer-events:none}
+.hero-vid-wrap iframe{width:100%;height:100%;border:none}
+
+.hero-vignette{
+  position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(to right,rgba(20,20,20,.96) 0%,rgba(20,20,20,.5) 35%,transparent 65%),
+    linear-gradient(to top,rgba(20,20,20,1) 0%,rgba(20,20,20,.4) 18%,transparent 45%),
+    linear-gradient(to bottom,rgba(0,0,0,.3) 0%,transparent 15%);
+}
+
+.hero-content{
+  position:relative;z-index:2;padding:0 4% 7vh;max-width:min(580px,92%);
+  animation:billIn .9s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes billIn{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+
+.hero-title-text{
+  font-weight:900;font-size:clamp(46px,8vw,96px);line-height:.92;letter-spacing:-.02em;
+  text-shadow:2px 4px 30px rgba(0,0,0,.8);margin-bottom:4px;
+}
+.hero-title-text em{color:var(--red);font-style:normal}
+
+.hero-meta{display:flex;align-items:center;gap:10px;margin:14px 0 10px;flex-wrap:wrap}
+.hero-match{font-size:15px;font-weight:700;color:var(--green)}
+.hero-badge{border:1px solid rgba(255,255,255,.55);color:rgba(255,255,255,.85);font-size:11px;font-weight:600;padding:2px 6px}
+
+.hero-synop{
+  font-size:clamp(13px,1.4vw,16px);font-weight:400;color:rgba(255,255,255,.88);
+  line-height:1.55;margin-bottom:12px;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.hero-tags-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;align-items:center}
+.hero-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.5)}
+.hero-tag-t{font-size:13px;color:rgba(255,255,255,.7)}
+
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.hbtn{
+  display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer;
+  font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;
+  padding:10px 26px;border-radius:4px;transition:background .15s,transform .15s;
+  text-decoration:none;
+}
+.hbtn:hover{transform:scale(1.04)}
+.hbtn.play{background:var(--white);color:#000}
+.hbtn.play:hover{background:rgba(255,255,255,.75)}
+.hbtn.info{background:rgba(109,109,110,.7);color:var(--white)}
+.hbtn.info:hover{background:rgba(109,109,110,.4)}
+.hbtn i{font-size:20px}
+
+/* ═══════════════════════════════════════════════
+   ROWS WRAPPER
+═══════════════════════════════════════════════ */
+.rows-wrap{position:relative;z-index:10;margin-top:-10vh;padding-top:calc(var(--nav-h) + 44px)}
+
+/* Single row */
+.nf-row{
+  margin-bottom:3vw;padding:0 4%;
+  opacity:0;transform:translateY(28px);
+  transition:opacity .6s ease,transform .6s ease;
+}
+.nf-row.vis{opacity:1;transform:none}
+
+.row-header{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;cursor:default}
+.row-title{font-size:clamp(14px,1.4vw,18px);font-weight:700;color:var(--white)}
+.row-explore{
+  font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.08em;
+  opacity:0;transform:translateX(-5px);transition:opacity .2s,transform .2s;
+  display:flex;align-items:center;gap:4px;cursor:pointer;
+}
+.row-header:hover .row-explore{opacity:1;transform:none}
+
+/* Slider */
+.row-slider-wrap{position:relative}
+.row-slider{
+  display:flex;gap:4px;overflow-x:auto;overflow-y:visible;
+  scrollbar-width:none;padding-bottom:4px;scroll-snap-type:x mandatory;
+}
+.row-slider::-webkit-scrollbar{display:none}
+
+/* Arrows */
+.ra{
+  position:absolute;top:0;bottom:0;width:4%;background:rgba(20,20,20,.7);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:50;opacity:0;transition:opacity .2s;
+  border:none;color:var(--white);font-size:22px;
+}
+.row-slider-wrap:hover .ra{opacity:1}
+.ra.l{left:0;border-radius:0 3px 3px 0}
+.ra.r{right:0;border-radius:3px 0 0 3px}
+.ra:hover{background:rgba(20,20,20,.97)}
+
+/* ═══════════════════════════════════════════════
+   NETFLIX CARD — with hover popout
+═══════════════════════════════════════════════ */
+.nf-card{
+  flex-shrink:0;scroll-snap-align:start;
+  position:relative;cursor:pointer;border-radius:4px;
+  transition:transform .25s ease,z-index 0s .25s;z-index:1;
+}
+.nf-card:hover{transform:scale(1.45);z-index:100;transition:transform .25s ease .15s,z-index 0s .15s}
+.nf-card:first-child:hover{transform-origin:left center}
+.nf-card:last-child:hover{transform-origin:right center}
+
+.card-thumb{width:100%;border-radius:4px 4px 0 0;overflow:hidden;position:relative;background:#0a0a0a}
+.card-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+.card-ov{
+  position:absolute;inset:0;background:rgba(0,0,0,.25);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+}
+.nf-card:hover .card-ov{opacity:1}
+.card-ov-ico{font-size:28px;color:rgba(255,255,255,.9);filter:drop-shadow(0 0 8px rgba(0,0,0,.7))}
+
+/* Popout */
+.card-pop{
+  position:absolute;left:0;right:0;top:100%;
+  background:#1f1f1f;border-radius:0 0 4px 4px;
+  box-shadow:0 12px 40px rgba(0,0,0,.9);
+  padding:10px 12px 12px;
+  opacity:0;pointer-events:none;transform:translateY(-4px);
+  transition:opacity .2s ease .15s,transform .2s ease .15s;z-index:10;
+}
+.nf-card:hover .card-pop{opacity:1;pointer-events:all;transform:none}
+
+.pop-actions{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.pop-btn{
+  width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.4);
+  background:rgba(42,42,42,.8);color:var(--white);font-size:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .15s,background .15s;flex-shrink:0;text-decoration:none;
+}
+.pop-btn:hover{border-color:var(--white);background:#333}
+.pop-btn.big{width:34px;height:34px;font-size:16px;background:var(--white);color:#000;border-color:var(--white)}
+.pop-btn.big:hover{background:rgba(255,255,255,.8)}
+.pop-btn.ml{margin-left:auto}
+
+.pop-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.pop-match{font-size:12px;font-weight:700;color:var(--green)}
+.pop-new{font-size:11px;font-weight:700;color:#fff;background:var(--green);padding:1px 6px;border-radius:2px}
+.pop-rating{font-size:11px;border:1px solid rgba(255,255,255,.5);color:rgba(255,255,255,.8);padding:1px 5px}
+.pop-eps{font-size:11px;color:rgba(255,255,255,.7)}
+
+.pop-genres{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.pop-genre{font-size:10px;color:rgba(255,255,255,.65)}
+.pop-sep{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.4);flex-shrink:0}
+.pop-title{font-size:11px;font-weight:600;color:var(--white);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Card types */
+.nf-card.wide .card-thumb{aspect-ratio:16/9}
+.nf-card.tall  .card-thumb{aspect-ratio:2/3}
+  
+  /* ═══════════════════════════════════════════════
+   TOP-10
+═══════════════════════════════════════════════ */
+.nf-card.top10{width:clamp(190px,17vw,260px)}
+.t10-inner{display:flex;align-items:flex-end}
+.t10-num{
+  font-size:clamp(80px,10vw,130px);font-weight:900;line-height:1;letter-spacing:-.05em;
+  color:transparent;-webkit-text-stroke:3px rgba(255,255,255,.15);
+  margin-right:-18px;flex-shrink:0;user-select:none;
+}
+.t10-thumb{flex:1;border-radius:4px;overflow:hidden}
+.t10-thumb img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+
+/* ═══════════════════════════════════════════════
+   BEATS BAND
+═══════════════════════════════════════════════ */
+.beats-band{
+  margin:0 0 3vw;padding:48px 4%;
+  background:linear-gradient(135deg,rgba(229,9,20,.07) 0%,transparent 70%);
+  border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);
+}
+.beats-eyebrow{font-size:11px;font-weight:700;letter-spacing:.35em;color:var(--red);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.beats-eyebrow::before{content:'';width:28px;height:2px;background:var(--red);box-shadow:0 0 8px var(--red)}
+.beats-h{font-weight:900;font-size:clamp(28px,4vw,48px);line-height:1;margin-bottom:12px}
+.beats-p{font-size:14px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:28px;max-width:560px}
+.beats-row{display:flex;gap:12px;flex-wrap:wrap}
+.bbtn{
+  display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:4px;
+  font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;text-decoration:none;transition:transform .15s,background .15s;
+}
+.bbtn:hover{transform:scale(1.04)}
+.bbtn.pri{background:var(--red);color:var(--white);border:none;box-shadow:0 4px 20px rgba(229,9,20,.4)}
+.bbtn.pri:hover{background:var(--red-h)}
+.bbtn.sec{background:transparent;border:2px solid rgba(255,255,255,.3);color:var(--white)}
+.bbtn.sec:hover{border-color:var(--white)}
+
+/* ═══════════════════════════════════════════════
+   CONTACT
+═══════════════════════════════════════════════ */
+#contact{
+  padding:56px 4%;
+  background:linear-gradient(to bottom,transparent,rgba(0,0,0,.6));
+}
+.contact-head{margin-bottom:36px}
+.contact-head h2{font-weight:900;font-size:clamp(24px,3.5vw,40px);margin-bottom:8px}
+.contact-head p{font-size:14px;color:var(--muted)}
+
+.contact-grid{display:grid;grid-template-columns:320px 1fr;gap:24px;max-width:960px}
+@media(max-width:820px){.contact-grid{grid-template-columns:1fr}}
+
+.agent-card{
+  background:var(--card-bg);border-radius:6px;padding:36px 28px;
+  text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;
+  border:1px solid rgba(255,255,255,.07);
+}
+.agent-avatar{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--red);box-shadow:0 0 20px rgba(229,9,20,.35)}
+.agent-name{font-weight:800;font-size:22px}
+.agent-role{font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--red);text-transform:uppercase}
+.agent-bio{font-size:13px;color:var(--muted);line-height:1.7}
+.agent-status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--green);font-weight:700}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:sdotblink 2s infinite}
+@keyframes sdotblink{0%,100%{opacity:1}50%{opacity:.25}}
+.agent-cta{
+  width:100%;padding:13px;background:var(--red);border:none;border-radius:4px;
+  color:var(--white);font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:background .15s,transform .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.agent-cta:hover{background:var(--red-h);transform:scale(1.02)}
+
+.form-box{background:var(--card-bg);border-radius:6px;padding:36px 32px;border:1px solid rgba(255,255,255,.07)}
+.form-box h3{font-weight:800;font-size:20px;margin-bottom:24px}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fg label{font-size:11px;font-weight:700;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
+.fg input,.fg select,.fg textarea{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:4px;color:var(--white);font-family:'Montserrat',sans-serif;font-size:13px;
+  padding:11px 14px;outline:none;width:100%;transition:border-color .2s,background .2s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:rgba(229,9,20,.6);background:rgba(255,255,255,.1)}
+.fg select{appearance:none;cursor:pointer}
+.fg select option{background:#1a1a1a;color:#fff}
+.fg textarea{resize:vertical;min-height:100px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:480px){.two-col{grid-template-columns:1fr}}
+.sbtn{
+  width:100%;padding:15px;margin-top:8px;background:var(--red);border:none;border-radius:4px;
+  color:var(--white);font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:background .15s,transform .15s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.sbtn:hover:not(:disabled){background:var(--red-h);transform:scale(1.02)}
+.sbtn:disabled{opacity:.7;cursor:not-allowed}
+.sbtn.ok{background:#16a34a}
+.spin{width:17px;height:17px;border:2px solid rgba(255,255,255,.3);border-top-color:var(--white);border-radius:50%;animation:spn .65s linear infinite;display:none}
+.sbtn.ld .spin{display:block}
+@keyframes spn{to{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════════════
+   GALLERY MODAL
+═══════════════════════════════════════════════ */
+#gal-modal{
+  position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.92);
+  backdrop-filter:blur(18px);display:none;flex-direction:column;overflow-y:auto;
+}
+#gal-modal.on{display:flex}
+.gal-hdr{
+  position:sticky;top:0;z-index:1;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);
+  display:flex;align-items:center;gap:14px;padding:16px 4%;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.gal-title{font-weight:800;font-size:20px}
+.mbk{
+  width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);color:var(--white);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;
+  transition:background .15s;flex-shrink:0;
+}
+.mbk:hover{background:var(--red);border-color:var(--red)}
+.gal-body{padding:24px 4% 48px;flex:1}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+.gal-item{border-radius:4px;overflow:hidden;cursor:pointer;aspect-ratio:4/3;background:#111;position:relative}
+.gal-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.gal-item:hover img{transform:scale(1.06)}
+.gal-item-ov{
+  position:absolute;inset:0;background:rgba(0,0,0,.35);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .25s;
+}
+.gal-item:hover .gal-item-ov{opacity:1}
+.gal-item-ov i{font-size:28px;color:#fff}
+
+/* ═══════════════════════════════════════════════
+   VIDEO MODAL
+═══════════════════════════════════════════════ */
+#vid-modal{position:fixed;inset:0;z-index:4000;background:#000;display:none;flex-direction:column}
+#vid-modal.on{display:flex}
+.vid-hdr{
+  position:absolute;top:0;left:0;right:0;height:64px;
+  background:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);
+  display:flex;align-items:center;padding:0 4%;gap:14px;z-index:1;
+}
+.vid-title{font-weight:700;font-size:18px}
+#vid-frame{width:100%;height:100%;border:none;display:block}
+
+/* ═══════════════════════════════════════════════
+   IMAGE FULLSCREEN
+═══════════════════════════════════════════════ */
+#img-fs{position:fixed;inset:0;z-index:5000;background:#000;display:none;align-items:center;justify-content:center}
+#img-fs.on{display:flex}
+#img-fs img{max-width:100%;max-height:100%;object-fit:contain;animation:fsin .25s ease}
+@keyframes fsin{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:none}}
+#img-fs-close{
+  position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  color:#fff;font-size:17px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background .15s;
+}
+#img-fs-close:hover{background:var(--red);border-color:var(--red)}
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
+footer{padding:48px 4% 24px;border-top:1px solid rgba(255,255,255,.1)}
+.ft-social{display:flex;gap:18px;margin-bottom:28px}
+.ft-social a{color:rgba(255,255,255,.6);font-size:18px;text-decoration:none;transition:color .15s}
+.ft-social a:hover{color:var(--white)}
+.ft-links{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 16px;max-width:700px;margin-bottom:28px}
+@media(max-width:600px){.ft-links{grid-template-columns:repeat(2,1fr)}}
+.ft-links a{color:rgba(255,255,255,.45);text-decoration:none;font-size:12px;transition:color .15s;cursor:pointer}
+.ft-links a:hover{color:rgba(255,255,255,.9)}
+.ft-copy{font-size:11px;color:rgba(255,255,255,.3)}
+.ft-copy span{color:var(--red)}
+
+/* ═══════════════════════════════════════════════
+   FLOATING CHAT
+═══════════════════════════════════════════════ */
+#fchat{
+  position:fixed;bottom:26px;right:26px;z-index:2000;
+  width:56px;height:56px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,#1a73e8,#0d5bcb);
+  color:#fff;font-size:21px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 5px 24px rgba(26,115,232,.55);
+  animation:fbounce 3s ease-in-out infinite;
+}
+#fchat:hover{animation-play-state:paused;transform:scale(1.12)}
+@keyframes fbounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.fping{
+  position:absolute;top:-1px;right:-1px;width:14px;height:14px;border-radius:50%;
+  background:var(--red);border:2px solid var(--bg);
+  animation:fpb 2s ease-in-out infinite;
+}
+@keyframes fpb{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
+
+/* ═══════════════════════════════════════════════
+   TOAST & HIGHLIGHT
+═══════════════════════════════════════════════ */
+#toast{
+  position:fixed;bottom:88px;left:50%;transform:translateX(-50%);
+  background:rgba(30,30,30,.97);border:1px solid rgba(255,255,255,.1);
+  border-radius:6px;padding:11px 20px;font-size:13px;z-index:6000;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+  white-space:nowrap;backdrop-filter:blur(12px);
+}
+#toast.show{opacity:1}
+.highlight{background:rgba(229,9,20,.35);border-radius:2px;outline:2px solid var(--red)}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-logo">RC</div>
+  <div class="ld-bar"><div class="ld-fill" id="ldfill"></div></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <span class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    RC <small>Reinblacks Creativz</small>
+  </span>
+  <div class="nav-links">
+    <a onclick="scrollTo2('hero')" class="active">Home</a>
+    <a onclick="scrollTo2('ai-visualizers')">AI Videos</a>
+    <a onclick="scrollTo2('ai-photos')">Photos</a>
+    <a onclick="scrollTo2('graphics')">Graphics</a>
+    <a onclick="scrollTo2('beats')">Beats</a>
+    <a onclick="scrollTo2('contact')">Contact</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-search" id="nav-search">
+      <button class="srch-ico" onclick="toggleSearch()"><i class="fas fa-search"></i></button>
+      <input class="srch-inp" id="srch" type="text" placeholder="Titles, genres…" autocomplete="off">
+    </div>
+    <button class="nav-bell"><i class="fas fa-bell"></i><span class="bell-dot"></span></button>
+    <div class="nav-ava" onclick="scrollTo2('contact')">R</div>
+    <button class="nav-ham" onclick="scrollTo2('contact')"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- CATEGORY BAR -->
+<div id="catbar">
+  <button class="cbt active" onclick="scrollTo2('ai-visualizers')">AI Visualizers</button>
+  <button class="cbt" onclick="scrollTo2('ai-ads')">AI Ads</button>
+  <button class="cbt" onclick="scrollTo2('ai-photos')">AI Photos</button>
+  <button class="cbt" onclick="scrollTo2('graphics')">Graphics</button>
+  <button class="cbt" onclick="scrollTo2('beats')">Beats</button>
+  <button class="cbt apply" onclick="scrollTo2('contact')">Apply Now</button>
+</div>
+
+<!-- HERO BILLBOARD -->
+<section id="hero">
+  <div class="hero-vid-wrap">
+    <iframe
+      src="https://www.youtube.com/embed/HMvHTSN_ooE?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=HMvHTSN_ooE"
+      allow="autoplay;encrypted-media" allowfullscreen></iframe>
+  </div>
+  <div class="hero-vignette"></div>
+  <div class="hero-content">
+    <div class="hero-title-text">Reinblacks<br><em>Creativz</em></div>
+    <div class="hero-meta">
+      <span class="hero-match">99% Match</span>
+      <span class="hero-badge">4K</span>
+      <span class="hero-badge">HD</span>
+      <span class="hero-badge">18+</span>
+    </div>
+    <p class="hero-synop">Pro Editing · 4K HD Quality · Realistic AI — Premium creative services powered by cutting-edge artificial intelligence and human artistry. Transform your brand with cinematic visuals that stop the scroll.</p>
+    <div class="hero-tags-row">
+      <span class="hero-tag-t">AI Videos</span><span class="hero-dot"></span>
+      <span class="hero-tag-t">Photo Cloning</span><span class="hero-dot"></span>
+      <span class="hero-tag-t">Graphic Design</span><span class="hero-dot"></span>
+      <span class="hero-tag-t">Beats</span>
+    </div>
+    <div class="hero-btns">
+      <a href="#ai-visualizers" class="hbtn play"><i class="fas fa-play"></i> Play</a>
+      <a href="#contact" class="hbtn info"><i class="fas fa-info-circle"></i> More Info</a>
+    </div>
+  </div>
+</section>
+  
+  <!-- CONTENT ROWS -->
+<div class="rows-wrap">
+
+  <!-- Row 1: AI Visualizers -->
+  <div class="nf-row" id="ai-visualizers">
+    <div class="row-header">
+      <span class="row-title">AI Video Music Visualizers</span>
+      <span class="row-explore" onclick="scrollTo2('ai-visualizers')">Explore All <i class="fas fa-chevron-right"></i></span>
+    </div>
+    <div class="row-slider-wrap">
+      <button class="ra l" onclick="slideRow('vz-sl',-1)"><i class="fas fa-chevron-left"></i></button>
+      <div class="row-slider" id="vz-sl"></div>
+      <button class="ra r" onclick="slideRow('vz-sl',1)"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <!-- Row 2: AI Ads -->
+  <div class="nf-row" id="ai-ads">
+    <div class="row-header">
+      <span class="row-title">AI Ads Videos</span>
+      <span class="row-explore">Explore All <i class="fas fa-chevron-right"></i></span>
+    </div>
+    <div class="row-slider-wrap">
+      <button class="ra l" onclick="slideRow('ad-sl',-1)"><i class="fas fa-chevron-left"></i></button>
+      <div class="row-slider" id="ad-sl"></div>
+      <button class="ra r" onclick="slideRow('ad-sl',1)"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <!-- Row 3: AI Photos -->
+  <div class="nf-row" id="ai-photos">
+    <div class="row-header">
+      <span class="row-title">AI Photos &amp; Cloning</span>
+      <span class="row-explore">Explore All <i class="fas fa-chevron-right"></i></span>
+    </div>
+    <div class="row-slider-wrap">
+      <div class="row-slider" id="ph-sl"></div>
+    </div>
+  </div>
+
+  <!-- Row 4: Graphics -->
+  <div class="nf-row" id="graphics">
+    <div class="row-header">
+      <span class="row-title">Graphics Design</span>
+      <span class="row-explore">Explore All <i class="fas fa-chevron-right"></i></span>
+    </div>
+    <div class="row-slider-wrap">
+      <div class="row-slider" id="gr-sl"></div>
+    </div>
+  </div>
+
+  <!-- Top 10 -->
+  <div class="nf-row" id="top10-row">
+    <div class="row-header">
+      <span class="row-title">Top 10 in Reinblacks Today</span>
+    </div>
+    <div class="row-slider-wrap">
+      <button class="ra l" onclick="slideRow('t10-sl',-1)"><i class="fas fa-chevron-left"></i></button>
+      <div class="row-slider" id="t10-sl"></div>
+      <button class="ra r" onclick="slideRow('t10-sl',1)"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <!-- Beats Band -->
+  <div class="nf-row beats-band" id="beats">
+    <div class="beats-eyebrow"><i class="fas fa-music"></i> Reinblacks Beats</div>
+    <h2 class="beats-h">Premium Beats &amp; Instrumentals</h2>
+    <p class="beats-p">Professionally mastered beats for every genre — trap bangers to lo-fi. License your sound and elevate your project today.</p>
+    <div class="beats-row">
+      <a href="https://www.beatstars.com" target="_blank" rel="noopener" class="bbtn pri"><i class="fas fa-play-circle"></i> Shop BeatStars</a>
+      <a href="https://payhip.com" target="_blank" rel="noopener" class="bbtn sec"><i class="fas fa-shopping-bag"></i> Browse Payhip</a>
+    </div>
+  </div>
+
+</div><!-- /rows-wrap -->
+
+<!-- CONTACT -->
+<section id="contact" class="nf-row">
+  <div class="contact-head">
+    <h2>Work With Us</h2>
+    <p>Ready to create something extraordinary? Let's connect.</p>
+  </div>
+  <div class="contact-grid">
+    <div class="agent-card">
+      <img class="agent-avatar" src="https://ui-avatars.com/api/?name=Agent+R&background=E50914&color=fff&size=120" alt="Agent Reinblacks">
+      <div class="agent-name">Agent Reinblacks</div>
+      <div class="agent-role">Creative Director</div>
+      <div class="agent-status"><span class="sdot"></span> Available Now</div>
+      <p class="agent-bio">Whether you need AI-powered videos, stunning graphics, or fire beats — I'm here to bring your vision to life. Let's make it happen.</p>
+      <button class="agent-cta" onclick="openTidio()"><i class="fas fa-comment-dots"></i> Ask Agent Now</button>
+    </div>
+    <div class="form-box">
+      <h3>Submit Your Application</h3>
+      <form id="cform" onsubmit="sendEmail(event)">
+        <div class="two-col">
+          <div class="fg"><label>Full Name</label><input type="text" name="user_name" placeholder="Your name" required></div>
+          <div class="fg"><label>Email</label><input type="email" name="user_email" placeholder="you@email.com" required></div>
+        </div>
+        <div class="fg">
+          <label>Service Required</label>
+          <select name="service" required>
+            <option value="" disabled selected>Select a service…</option>
+            <option>AI Video Music Visualizer</option>
+            <option>AI Ads Video</option>
+            <option>AI Photo Cloning</option>
+            <option>AI Photo Editing</option>
+            <option>Logo Design</option>
+            <option>Poster Design</option>
+            <option>Branding Package</option>
+            <option>Beats License</option>
+            <option>Full Creative Package</option>
+          </select>
+        </div>
+        <div class="fg"><label>Project Details</label><textarea name="message" placeholder="Tell us about your project, budget, and timeline…" required></textarea></div>
+        <button type="submit" class="sbtn" id="sbtn">
+          <div class="spin"></div>
+          <span class="stxt">Send Application <i class="fas fa-paper-plane"></i></span>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+  <!-- FOOTER -->
+<footer>
+  <div class="ft-social">
+    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+    <a href="#" title="X / Twitter"><i class="fab fa-x-twitter"></i></a>
+    <a href="#" title="TikTok"><i class="fab fa-tiktok"></i></a>
+    <a href="https://www.beatstars.com" target="_blank" title="BeatStars"><i class="fas fa-music"></i></a>
+  </div>
+  <div class="ft-links">
+    <a onclick="scrollTo2('ai-visualizers')">AI Visualizers</a>
+    <a onclick="scrollTo2('ai-ads')">AI Ads</a>
+    <a onclick="scrollTo2('ai-photos')">AI Photos</a>
+    <a onclick="scrollTo2('graphics')">Graphics</a>
+    <a href="https://www.beatstars.com" target="_blank">BeatStars</a>
+    <a href="https://payhip.com" target="_blank">Payhip</a>
+    <a onclick="scrollTo2('contact')">Apply Now</a>
+    <a onclick="openTidio()">Live Chat</a>
+  </div>
+  <p class="ft-copy">&copy; 2026 <span>Reinblacks Creativz</span>. All rights reserved. Made with <span>♥</span> &amp; AI Magic.</p>
+</footer>
+
+<!-- FLOATING CHAT -->
+<button id="fchat" onclick="openTidio()" title="Chat with us">
+  <i class="fas fa-comment-dots"></i><span class="fping"></span>
+</button>
+
+<!-- VIDEO MODAL -->
+<div id="vid-modal">
+  <div class="vid-hdr">
+    <button class="mbk" onclick="closeVid()"><i class="fas fa-arrow-left"></i></button>
+    <span class="vid-title" id="vid-title">Now Playing</span>
+  </div>
+  <iframe id="vid-frame" src="" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>
+</div>
+
+<!-- GALLERY MODAL -->
+<div id="gal-modal">
+  <div class="gal-hdr">
+    <button class="mbk" onclick="closeGal()"><i class="fas fa-arrow-left"></i></button>
+    <span class="gal-title" id="gal-title">Gallery</span>
+  </div>
+  <div class="gal-body"><div class="gal-grid" id="gal-grid"></div></div>
+</div>
+
+<!-- IMAGE FULLSCREEN -->
+<div id="img-fs">
+  <button id="img-fs-close" onclick="closeImgFs()"><i class="fas fa-times"></i></button>
+  <img id="img-fs-img" src="" alt="">
+</div>
+
+<div id="toast"></div>
+
+<!-- ════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
+<script>
+/* DATA */
+const galleries={
+  cloning:[
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778666613/InCollage_20260513_121924997_tp86ie.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778666611/InCollage_20260513_125608805_wiv4cr.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778666655/InCollage_20260513_124510812_nlzdfz.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778666681/InCollage_20260513_122923395_tabaye.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778666597/InCollage_20260513_124134450_sq64j9.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778666603/InCollage_20260513_123901457_pjncvz.jpg"
+  ],
+  editing:[
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778666590/InCollage_20260513_124719161_ksw2kt.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778666587/InCollage_20260513_124952807_prs7y9.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778666586/InCollage_20260513_125310559_d2ncgy.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778666584/InCollage_20260513_125034406_tnoth1.jpg"
+  ],
+  logos:[
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778656537/1778654790796_e6wgiy.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778656537/1778655130025_neq7gu.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778656537/1778654866874_yf3hme.jpg"
+  ],
+  posters:[
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778687890/3e207a10-4ebc-11f1-8671-0d0c60b1ec57_hosa8u.png",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778687901/02f54ce0-4edf-11f1-b7e2-7d1a1e38f683_wkdbjm.png"
+  ],
+  branding:[
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778688667/1778656761326_dlquo0.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778688668/1778657276427_iurlnd.jpg",
+    "https://res.cloudinary.com/datfuxotx/image/upload/v1778688667/1778657145970_cvp8wc.jpg"
+  ]
+};
+
+const vizVideos=[
+  {id:'Pi05jb9xXtU',title:'Music Visualizer I',  match:'97%',genres:['Electronic','Visual','4K']},
+  {id:'fLsiRfpwbz8',title:'Music Visualizer II', match:'95%',genres:['Trap','Animated','Beat']},
+  {id:'YpjmFiI_6Ms',title:'Music Visualizer III',match:'98%',genres:['Lo-Fi','Motion','HD']},
+  {id:'0lMemK0xYXs',title:'Music Visualizer IV', match:'94%',genres:['Afro','Colorful','Pro']}
+];
+const adVideos=[
+  {id:'zIUotjon9PI',title:'AI Ad Campaign I',  match:'96%',genres:['Brand','Cinematic','30s']},
+  {id:'s6cpSzRMfw8',title:'AI Ad Campaign II', match:'93%',genres:['Social','Product','UGC']},
+  {id:'XxHxFwlWGD8',title:'AI Ad Campaign III',match:'97%',genres:['Luxury','Fashion','4K']},
+  {id:'TnKSGkY5Hds',title:'AI Ad Campaign IV', match:'95%',genres:['Viral','Reels','60s']}
+];
+const top10Items=[
+  {title:'AI Music Visualizer',img:galleries.cloning[0],tag:'#1 in AI Video'},
+  {title:'Photo Cloning',     img:galleries.cloning[1],tag:'#2 in Cloning'},
+  {title:'Logo Design',       img:galleries.logos[0],  tag:'#3 in Graphics'},
+  {title:'AI Ad Videos',      img:galleries.cloning[2],tag:'#4 in Ads'},
+  {title:'Branding Package',  img:galleries.branding[0],tag:'#5 in Branding'},
+  {title:'AI Photo Editing',  img:galleries.editing[0],tag:'#6 in Editing'},
+  {title:'Poster Design',     img:galleries.posters[0],tag:'#7 in Print'},
+  {title:'Beats License',     img:galleries.branding[1],tag:'#8 in Audio'},
+  {title:'Full Package',      img:galleries.logos[1],  tag:'#9 in Bundle'},
+  {title:'Brand Identity',    img:galleries.branding[2],tag:'#10 in Identity'}
+];
+
+/* LOADER */
+(()=>{
+  const fill=document.getElementById('ldfill');
+  const loader=document.getElementById('loader');
+  let w=0;
+  document.body.style.overflow='hidden';
+  const iv=setInterval(()=>{
+    w=Math.min(w+4+Math.random()*5,100);
+    fill.style.width=w+'%';
+    if(w>=100){
+      clearInterval(iv);
+      setTimeout(()=>{loader.classList.add('gone');document.body.style.overflow='';},110);
+    }
+  },24);
+})();
+
+/* NAV */
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('solid',scrollY>10);
+});
+function scrollTo2(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
+
+/* SEARCH */
+let searchOpen=false;
+function toggleSearch(){
+  const wrap=document.getElementById('nav-search'),inp=document.getElementById('srch');
+  searchOpen=!searchOpen;
+  wrap.classList.toggle('open',searchOpen);
+  if(searchOpen)setTimeout(()=>inp.focus(),310);
+}
+document.getElementById('srch').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(e.target.value)});
+
+let lastMark=null;
+function doSearch(q){
+  if(lastMark){const p=lastMark.parentNode;if(p){p.replaceChild(document.createTextNode(lastMark.textContent),lastMark);p.normalize();}lastMark=null;}
+  if(!q.trim())return;
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{
+    acceptNode(n){
+      const t=n.parentElement?.tagName;
+      if(['SCRIPT','STYLE','NOSCRIPT','IFRAME','INPUT','TEXTAREA'].includes(t))return NodeFilter.FILTER_REJECT;
+      if(!n.textContent.trim())return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  let node;
+  while((node=w.nextNode())){
+    const i=node.textContent.toLowerCase().indexOf(q.toLowerCase());
+    if(i!==-1){
+      const r=document.createRange();r.setStart(node,i);r.setEnd(node,i+q.length);
+      const m=document.createElement('mark');m.className='highlight';
+      r.surroundContents(m);lastMark=m;
+      m.scrollIntoView({behavior:'smooth',block:'center'});
+      showToast(`Found: "${q}"`);
+      setTimeout(()=>{if(lastMark){const p=lastMark.parentNode;if(p){p.replaceChild(document.createTextNode(lastMark.textContent),lastMark);p.normalize();}lastMark=null;}},3200);
+      return;
+    }
+  }
+  showToast(`No results for "${q}"`);
+}
+  
+  /* TOAST */
+let toastT;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600)}
+
+/* BUILD VIDEO CARD */
+function makeVidCard(v){
+  const thumb=`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
+  const c=document.createElement('div');
+  c.className='nf-card wide';
+  c.style.width='clamp(180px,16vw,260px)';
+  const gs=v.genres.map((g,i,a)=>`<span class="pop-genre">${g}</span>${i<a.length-1?'<span class="pop-sep"></span>':''}`).join('');
+  c.innerHTML=`
+    <div class="card-thumb">
+      <img src="${thumb}" alt="${v.title}" loading="lazy">
+      <div class="card-ov"><i class="fas fa-play-circle card-ov-ico"></i></div>
+    </div>
+    <div class="card-pop">
+      <div class="pop-title">${v.title}</div>
+      <div class="pop-actions">
+        <button class="pop-btn big pbig" title="Play"><i class="fas fa-play"></i></button>
+        <button class="pop-btn" title="Add to List"><i class="fas fa-plus"></i></button>
+        <button class="pop-btn" title="Like"><i class="fas fa-thumbs-up"></i></button>
+        <button class="pop-btn" title="Dislike"><i class="fas fa-thumbs-down"></i></button>
+        <button class="pop-btn ml" title="More Info"><i class="fas fa-chevron-down"></i></button>
+      </div>
+      <div class="pop-meta">
+        <span class="pop-match">${v.match} Match</span>
+        <span class="pop-new">New</span>
+        <span class="pop-rating">18+</span>
+        <span class="pop-eps">4K HD</span>
+      </div>
+      <div class="pop-genres">${gs}</div>
+    </div>`;
+  c.querySelector('.card-thumb').addEventListener('click',()=>openVid(v.id,v.title));
+  c.querySelector('.pbig').addEventListener('click',()=>openVid(v.id,v.title));
+  return c;
+}
+
+/* BUILD GALLERY CARD (tall) */
+function makeGalCard(title,imgArr,match,genres){
+  const c=document.createElement('div');
+  c.className='nf-card tall';
+  c.style.width='clamp(130px,11vw,180px)';
+  const gs=(genres||[]).map((g,i,a)=>`<span class="pop-genre">${g}</span>${i<a.length-1?'<span class="pop-sep"></span>':''}`).join('');
+  c.innerHTML=`
+    <div class="card-thumb">
+      <img src="${imgArr[0]||''}" alt="${title}" loading="lazy">
+      <div class="card-ov"><i class="fas fa-images card-ov-ico"></i></div>
+    </div>
+    <div class="card-pop">
+      <div class="pop-title">${title}</div>
+      <div class="pop-actions">
+        <button class="pop-btn big vbig" title="View Gallery"><i class="fas fa-images"></i></button>
+        <button class="pop-btn" title="Add to List"><i class="fas fa-plus"></i></button>
+        <button class="pop-btn" title="Like"><i class="fas fa-thumbs-up"></i></button>
+        <button class="pop-btn ml" title="More"><i class="fas fa-chevron-down"></i></button>
+      </div>
+      <div class="pop-meta">
+        <span class="pop-match">${match} Match</span>
+        <span class="pop-new">New</span>
+        <span class="pop-eps">${imgArr.length} Photos</span>
+      </div>
+      <div class="pop-genres">${gs}</div>
+    </div>`;
+  c.querySelector('.card-thumb').addEventListener('click',()=>openGal(title,imgArr));
+  c.querySelector('.vbig').addEventListener('click',()=>openGal(title,imgArr));
+  return c;
+}
+
+/* BUILD TOP-10 CARD */
+function makeTop10Card(item,num){
+  const c=document.createElement('div');
+  c.className='nf-card top10';
+  c.innerHTML=`
+    <div class="t10-inner">
+      <div class="t10-num">${num}</div>
+      <div class="t10-thumb"><img src="${item.img}" alt="${item.title}" loading="lazy"></div>
+    </div>
+    <div class="card-pop">
+      <div class="pop-title">${item.title}</div>
+      <div class="pop-actions">
+        <button class="pop-btn big"><i class="fas fa-play"></i></button>
+        <button class="pop-btn"><i class="fas fa-plus"></i></button>
+        <button class="pop-btn ml"><i class="fas fa-chevron-down"></i></button>
+      </div>
+      <div class="pop-meta">
+        <span class="pop-match">Trending</span>
+        <span class="pop-new">Top 10</span>
+      </div>
+      <div class="pop-genres"><span class="pop-genre">${item.tag}</span></div>
+    </div>`;
+  return c;
+}
+
+/* POPULATE */
+(function(){
+  const vzSl=document.getElementById('vz-sl');
+  vizVideos.forEach(v=>vzSl.appendChild(makeVidCard(v)));
+
+  const adSl=document.getElementById('ad-sl');
+  adVideos.forEach(v=>adSl.appendChild(makeVidCard(v)));
+
+  const phSl=document.getElementById('ph-sl');
+  phSl.appendChild(makeGalCard('Photo Cloning',galleries.cloning,'98%',['Cloning','Portrait','Realistic']));
+  phSl.appendChild(makeGalCard('AI Photo Editing',galleries.editing,'96%',['Editing','Color','Retouching']));
+
+  const grSl=document.getElementById('gr-sl');
+  grSl.appendChild(makeGalCard('Logos',galleries.logos,'97%',['Logo','Brand','Vector']));
+  grSl.appendChild(makeGalCard('Posters',galleries.posters,'95%',['Poster','Print','A4']));
+  grSl.appendChild(makeGalCard('Branding',galleries.branding,'98%',['Brand','Identity','Kit']));
+
+  const t10=document.getElementById('t10-sl');
+  top10Items.forEach((item,i)=>t10.appendChild(makeTop10Card(item,i+1)));
+})();
+
+/* SLIDE ROW */
+function slideRow(id,dir){
+  const sl=document.getElementById(id);
+  const card=sl.firstElementChild;
+  const w=card?card.offsetWidth+4:260;
+  sl.scrollBy({left:dir*w*3,behavior:'smooth'});
+}
+
+/* VIDEO MODAL */
+function openVid(id,title){
+  document.getElementById('vid-frame').src=`https://www.youtube.com/embed/${id}?autoplay=1&controls=1&rel=0`;
+  document.getElementById('vid-title').textContent=title;
+  document.getElementById('vid-modal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeVid(){
+  document.getElementById('vid-frame').src='';
+  document.getElementById('vid-modal').classList.remove('on');
+  document.body.style.overflow='';
+}
+
+/* GALLERY MODAL */
+function openGal(title,imgs){
+  document.getElementById('gal-title').textContent=title;
+  const grid=document.getElementById('gal-grid');
+  grid.innerHTML='';
+  imgs.forEach(src=>{
+    const d=document.createElement('div');
+    d.className='gal-item';
+    d.innerHTML=`<img src="${src}" alt="${title}" loading="lazy"><div class="gal-item-ov"><i class="fas fa-expand"></i></div>`;
+    d.addEventListener('click',()=>openImgFs(src));
+    grid.appendChild(d);
+  });
+  document.getElementById('gal-modal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeGal(){document.getElementById('gal-modal').classList.remove('on');document.body.style.overflow=''}
+
+/* IMG FULLSCREEN */
+function openImgFs(src){document.getElementById('img-fs-img').src=src;document.getElementById('img-fs').classList.add('on')}
+function closeImgFs(){document.getElementById('img-fs').classList.remove('on')}
+document.getElementById('img-fs').addEventListener('click',function(e){if(e.target===this)closeImgFs()});
+
+/* ESC */
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeVid();closeGal();closeImgFs()}});
+
+/* INTERSECTION OBSERVER */
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target)}})},{threshold:.07});
+document.querySelectorAll('.nf-row').forEach(el=>io.observe(el));
+
+/* CATBAR ACTIVE */
+(()=>{
+  const ids=['ai-visualizers','ai-ads','ai-photos','graphics','beats'];
+  const btns=document.querySelectorAll('#catbar .cbt:not(.apply)');
+  const sio=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){const idx=ids.indexOf(e.target.id);if(idx>-1)btns.forEach((b,i)=>b.classList.toggle('active',i===idx))}});
+  },{threshold:.35});
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)sio.observe(el)});
+})();
+
+/* TIDIO */
+function openTidio(){
+  try{
+    if(window.tidioChatApi){window.tidioChatApi.show();window.tidioChatApi.open();}
+    else document.addEventListener('tidioChat-ready',()=>{window.tidioChatApi.show();window.tidioChatApi.open();});
+  }catch(e){console.warn('Tidio:',e)}
+}
+
+/* EMAILJS */
+function sendEmail(e){
+  e.preventDefault();
+  const btn=document.getElementById('sbtn'),form=document.getElementById('cform');
+  btn.disabled=true;btn.classList.add('ld');btn.querySelector('.stxt').textContent='Sending…';
+  emailjs.init('xw4PXGpbb_tEf_ilH');
+  emailjs.sendForm('service_3x6pyyq','template_hddk7oj',form)
+    .then(()=>{
+      btn.classList.remove('ld');btn.classList.add('ok');
+      btn.querySelector('.stxt').innerHTML='Application Sent! <i class="fas fa-check-circle"></i>';
+      form.reset();
+      setTimeout(()=>{btn.disabled=false;btn.classList.remove('ok');btn.querySelector('.stxt').innerHTML='Send Application <i class="fas fa-paper-plane"></i>';},5000);
+    })
+    .catch(err=>{
+      console.error(err);btn.classList.remove('ld');btn.disabled=false;
+      btn.querySelector('.stxt').innerHTML='Error — Try Again <i class="fas fa-exclamation-triangle"></i>';
+      setTimeout(()=>{btn.querySelector('.stxt').innerHTML='Send Application <i class="fas fa-paper-plane"></i>';},3000);
+    });
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="//code.tidio.co/dmu9qvhzljut4stjuyoiwxqfjptj1nbj.js" async></script>
+</body>
+</html>
