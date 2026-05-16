@@ -168,7 +168,7 @@ body{background:var(--bg);color:var(--white);font-family:'Montserrat',sans-serif
 /* ═══════════════════════════════════════════════
    ROWS WRAPPER
 ═══════════════════════════════════════════════ */
-.rows-wrap{position:relative;z-index:10;margin-top:-10vh;padding-top:calc(var(--nav-h) + 44px)}
+.rows-wrap{position:relative;z-index:10;margin-top:0;...}
 
 /* Single row */
 .nf-row{
@@ -215,7 +215,7 @@ body{background:var(--bg);color:var(--white);font-family:'Montserrat',sans-serif
   position:relative;cursor:pointer;border-radius:4px;
   transition:transform .25s ease,z-index 0s .25s;z-index:1;
 }
-.nf-card:hover{transform:scale(1.45);z-index:100;transition:transform .25s ease .15s,z-index 0s .15s}
+.nf-card:hover{transform:scale(1.45);z-index:100;transition:transform .25s ease,z-index 0s;}
 .nf-card:first-child:hover{transform-origin:left center}
 .nf-card:last-child:hover{transform-origin:right center}
 
@@ -236,7 +236,7 @@ body{background:var(--bg);color:var(--white);font-family:'Montserrat',sans-serif
   background:#1f1f1f;border-radius:0 0 4px 4px;
   box-shadow:0 12px 40px rgba(0,0,0,.9);
   padding:10px 12px 12px;
-  opacity:0;pointer-events:none;transform:translateY(-4px);
+  opacity:0;pointer-events:none;transform:translateY(0px)
   transition:opacity .2s ease .15s,transform .2s ease .15s;z-index:10;
 }
 .nf-card:hover .card-pop{opacity:1;pointer-events:all;transform:none}
